@@ -1,0 +1,15 @@
+{
+  "name": "node-wa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.16.0",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.7.5",
+    "whatsapp-web.js": "^1.23.0"
+  }
+}

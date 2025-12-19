@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WA Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="bg-light">
+    <div class="container">
+      <div class="card my-5">
+        <div class="card-header">
+          <div class="d-flex justify-content-between my-2">
+            <h4>Devices</h4>
+            <div class="btn-group">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                <i class="fas fa-add"></i> Add Device
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table text-nowrap">
+              <thead>
+                <tr>
+                  <th class="">Device</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <i class="fas fa-phone"></i>
+                    <p class="mb-0 d-inline" id="number">-</p>
+                    <br />
+                    <i class="fas fa-user"></i>
+                    <p class="mb-0 d-inline" id="name">-</p>
+                    <br />
+                    <i class="fas fa-circle-dot"></i>
+                    <p class="mb-0 d-inline" id="state" class="status">
+                      LOADING
+                    </p>
+                  </td>
+                  <td class="text-end align-middle">
+                    <button id="btnReconnect" class="btn btn-primary">
+                      <i class="fas fa-sync me-1"></i> Reconnect
+                    </button>
+                    <button id="btnDisconnect" class="btn btn-danger">
+                      <i class="fas fa-power-off me-1"></i> Disconnect
+                    </button>
+                    <button class="btn btn-warning">
+                      <i class="fas fa-edit me-1"></i> Edit
+                    </button>
+                    <button class="btn btn-danger">
+                      <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <card class="card mb-3">
+        <div class="card-header">
+          <h4>History</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive mt-3">
+            <table
+              class="table text-nowrap  align-middle"
+            >
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nomor</th>
+                  <th>Pesan</th>
+                  <th>Waktu</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="history"></tbody>
+            </table>
+          </div>
+        </div>
+      </card>
+
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Device</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group mb-2">
+                  <label for="name" class="form-label">Name:</label>
+                  <input type="text" class="form-control" id="name" />
+                </div>
+                <div class="form-group mb-2">
+                  <label for="number" class="form-label">Number:</label>
+                  <input type="number" class="form-control" id="number" />
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                <i class="fas fa-ban"></i> Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      const elState = document.getElementById("state");
+      const elNumber = document.getElementById("number");
+      const elName = document.getElementById("name");
+      const btnReconnect = document.getElementById("btnReconnect");
+      const btnDisconnect = document.getElementById("btnDisconnect");
+
+      btnReconnect.onclick = () => socket.emit("wa:reconnect");
+      btnDisconnect.onclick = () => socket.emit("wa:disconnect");
+
+      socket.on("status", (data) => {
+        elState.textContent = data.state;
+        elState.style.color = data.state === "READY" ? "#28a745" : "#ffc107";
+
+        btnReconnect.disabled = data.state === "READY";
+        btnDisconnect.disabled = data.state !== "READY";
+      });
+
+      socket.on("info", (info) => {
+        elNumber.textContent = info.number;
+        elName.textContent = info.name;
+      });
+    </script>
+
+    <script>
+      const historyEl = document.getElementById("history");
+
+      function renderHistory(list) {
+        historyEl.innerHTML = "";
+        list.forEach((item, index) => addHistoryRow(item, list.length - index));
+      }
+
+      function addHistoryRow(item, no = 1) {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+      <td>${no}</td>
+      <td>
+        <strong>${item.phone}</strong>
+      </td>
+      <td >
+        ${item.message}
+      </td>
+      <td>
+        <small>${item.time}</small>
+      </td>
+      <td>
+        <span class="badge ${
+          item.status === "SENT" ? "bg-success" : "bg-danger"
+        }">
+          ${item.status}
+        </span>
+      </td>
+    `;
+
+        historyEl.prepend(tr);
+      }
+
+      socket.on("history:init", renderHistory);
+      socket.on("history:update", addHistoryRow);
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
