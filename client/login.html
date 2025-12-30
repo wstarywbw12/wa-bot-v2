@@ -3,46 +3,409 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Login WA Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WA Dashboard - Login</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #25D366;
+            --primary-dark: #128C7E;
+            --gradient-start: #25D366;
+            --gradient-end: #128C7E;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 420px;
+            width: 100%;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            background: white;
+            transition: transform var(--transition-speed);
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+        }
+
+       
+        .card-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-body {
+            padding: 35px 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all var(--transition-speed);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(37, 211, 102, 0.25);
+        }
+
+        .input-group-text {
+            background-color: transparent;
+            border: 2px solid #e0e0e0;
+            border-right: none;
+            padding-left: 15px;
+            color: #777;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        .password-toggle {
+            background: transparent;
+            border: 2px solid #e0e0e0;
+            border-left: none;
+            cursor: pointer;
+            color: #777;
+            padding: 0 15px;
+            transition: color var(--transition-speed);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border: none;
+            color: white;
+            padding: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all var(--transition-speed);
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(220, 53, 69, 0.05);
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .additional-options {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .additional-options a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .additional-options a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .login-container {
+                max-width: 100%;
+            }
+            
+            .card-body {
+                padding: 25px 20px;
+            }
+            
+            .card-header {
+                padding: 25px 15px;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card p-4 shadow" style="width:350px">
-            <h4 class="text-center mb-3">Login</h4>
-
-            <div class="mb-3">
-                <input id="username" class="form-control" placeholder="Username">
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="card-header">
+                <h3 class="card-title">WELCOME</h3>
             </div>
-            <div class="mb-3">
-                <input id="password" type="password" class="form-control" placeholder="Password">
+            
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person-fill"></i> Username
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-key-fill"></i> Password
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                            <button type="button" class="btn password-toggle" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage"></div>
+                    
+                    <button type="submit" class="btn btn-login" id="loginBtn">
+                        <span id="loginText">Login</span>
+                        <div class="loading-spinner" id="loadingSpinner"></div>
+                    </button>
+                </form>
             </div>
-
-            <button id="loginBtn" class="btn btn-primary w-100">Login</button>
-            <div id="err" class="text-danger small mt-2"></div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 WA Dashboard. Hak cipta dilindungi.</p>
         </div>
     </div>
 
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        document.getElementById("loginBtn").onclick = async () => {
-            const res = await fetch("/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    username: username.value,
-                    password: password.value
-                })
-            });
-
-            const json = await res.json();
-            if (!json.success) {
-                err.innerText = json.error;
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.className = 'bi bi-eye-slash';
             } else {
-                location.href = "/";
+                passwordInput.type = 'password';
+                eyeIcon.className = 'bi bi-eye';
             }
-        };
+        });
+        
+        // Form submission handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Reset error message
+            errorMessage.style.display = 'none';
+            
+            // Show loading state
+            loginText.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+            loginBtn.disabled = true;
+            
+            // Simulate API call delay
+            try {
+                const res = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const json = await res.json();
+                
+                // Reset button state
+                loginText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                loginBtn.disabled = false;
+                
+                if (!json.success) {
+                    // Show error message
+                    errorMessage.innerText = json.error || "Login gagal. Periksa username dan password.";
+                    errorMessage.style.display = 'block';
+                    
+                    // Shake animation for error
+                    errorMessage.style.animation = 'none';
+                    setTimeout(() => {
+                        errorMessage.style.animation = 'shake 0.5s';
+                    }, 10);
+                } else {
+                    // Success - redirect to dashboard
+                    location.href = "/";
+                }
+            } catch (error) {
+                // Network or other error
+                loginText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                loginBtn.disabled = false;
+                
+                errorMessage.innerText = "Terjadi kesalahan jaringan. Silakan coba lagi.";
+                errorMessage.style.display = 'block';
+            }
+        });
+        
+        // Add some interactive effects on form inputs
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.parentElement.classList.remove('focused');
+            });
+        });
+        
+        // Simple validation on blur
+        document.getElementById('username').addEventListener('blur', function() {
+            if (this.value.length < 3 && this.value.length > 0) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        document.getElementById('password').addEventListener('blur', function() {
+            if (this.value.length < 6 && this.value.length > 0) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
     </script>
 </body>
 
